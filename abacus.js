@@ -29,7 +29,7 @@ function UIElement(x, y, width, height, type, ref, subref, slotType) {
     this.beadSep = (this.type == 0) ? 3 : 4;
     this.beadHeight = 35;
     this.beadSpacing = 80;
-    this.beadWidth = 60;
+    this.beadWidth = 35;
     this.nodes = new Array();
     
     this.init = function() {
@@ -38,8 +38,8 @@ function UIElement(x, y, width, height, type, ref, subref, slotType) {
       for(var i=0; i < this.beadLines; i++) {
         for(var j=0; j < this.beadPerLine; j++) {
           var bead = new Bead();
-          bead.position[0] = 580 - i * this.beadSpacing;
-          bead.position[1] = 60 + this.beadPerLine * this.beadHeight - j * this.beadHeight;
+          bead.position[0] = 590 - i * this.beadSpacing;
+          bead.position[1] = 90 + this.beadPerLine * this.beadHeight - j * this.beadHeight;
           bead.value = 1;
           if(j > this.beadSep) {
             bead.position[1] = 60 + this.beadPerLine * this.beadHeight - (j * this.beadHeight + 2 * this.beadHeight);
@@ -52,32 +52,54 @@ function UIElement(x, y, width, height, type, ref, subref, slotType) {
       }
     };
     
-    this.printBeads = function(){
-        var beadsValues = new Array();
-        for(var i=0; i < this.nodes.length; i++){
-            if(this.nodes[i].active==true){
-                beadsValues.push(this.nodes[i].value);
-            }
-            else{
-                this.nodes.push(0);
-            }
-            
-        }
-        console.log(beadsValues);
-    };
-
+    this.intToRoman = function(num) {
+      var list = ['M', 'CM', 'D', 'CD','C','XC','L', 'XL','X','IX','V','IV','I']
+      var valueList = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1]
+      var result = ''
+      while(num !== 0) {
+          for(var i = 0 ; i < valueList.length ; i++) {
+              if(num >= valueList[i]){
+                  result += list[i]
+                  num -= valueList[i]
+                  break
+              }
+          }
+      }
+      return result
+  };
     this.getBeadsCount = function() {
         var beadsValues = new Array();
+        var totalValue = 0;
+        var values = [1,10,100,1000,10000, 100000, 1000000, 10000000];
+        var curLevel = 0;
         for(var i=0; i < this.nodes.length; i++){
             if(this.nodes[i].active==true){
                 beadsValues.push(this.nodes[i].value);
+                totalValue += (this.nodes[i].value)*values[curLevel];
             }
             else{
-                beadsValues.push(0);
+              beadsValues.push(0);
+            };
+            if((i+1)%5==0){
+              curLevel = curLevel+1;
             }
-            
         }
-        console.log(beadsValues);
+        console.log(totalValue);
+        
+        var roman = "";
+        if(totalValue<4000){
+          if(totalValue==0){
+            roman=" (nulla)";
+          }
+          else{
+            roman = ' (' + this.intToRoman(totalValue) +')';
+
+          }
+        } 
+
+        document.getElementById("total").innerHTML = totalValue + roman;
+
+        // console.log(beadsValues);
         // console.log(this.nodes);
       return this.nodes.length;
     };
@@ -153,7 +175,7 @@ function UIElement(x, y, width, height, type, ref, subref, slotType) {
       if(!canvas) console.log("Abacus error: can not create a canvas element");
       canvas.id = parentDivId + "_Abacus";
       canvas.width = 40 + abacusCtrl.beadLines * abacusCtrl.beadSpacing;
-      canvas.height= 60 + (abacusCtrl.beadPerLine+2) * abacusCtrl.beadHeight;
+      canvas.height= 90 + (abacusCtrl.beadPerLine+2) * abacusCtrl.beadHeight;
       document.body.appendChild(canvas);
       var parent = document.getElementById(divId);
       if(!parent) console.log("Abacus error: can not find an element with the given name: " + divId);
@@ -268,15 +290,15 @@ function UIElement(x, y, width, height, type, ref, subref, slotType) {
       ctx.lineWidth = 5;
       for(var i=0; i < abacusCtrl.beadLines; i++) {
         var x = -30 + abacusCtrl.beadLines * abacusCtrl.beadSpacing - i * abacusCtrl.beadSpacing;
-        var y = 20 + (abacusCtrl.beadPerLine+2) * abacusCtrl.beadHeight
+        var y = 50 + (abacusCtrl.beadPerLine+2) * abacusCtrl.beadHeight
         ctx.beginPath();
-        ctx.moveTo(x, 20);
+        ctx.moveTo(x, 30);
         ctx.lineTo(x, y);
         ctx.stroke();
       }
       for(var j=0; j < 2; j++) {
         var y = 20;
-        if(j === 1) y = 20 + (abacusCtrl.beadPerLine - abacusCtrl.beadSep) * abacusCtrl.beadHeight;
+        if(j === 1) y = 40 + (abacusCtrl.beadPerLine - abacusCtrl.beadSep) * abacusCtrl.beadHeight;
         if(j === 2) y = 20 + (abacusCtrl.beadPerLine+2) * abacusCtrl.beadHeight;
         if(j==1){
           ctx.beginPath();
@@ -295,7 +317,7 @@ function UIElement(x, y, width, height, type, ref, subref, slotType) {
       ctx.fillStyle = "rgba(255, 255, 255, 1.0)";
       ctx.textAlign = 'center';
       ctx.font = '16pt sans-serif';
-      var textY = 50 + (abacusCtrl.beadPerLine+2) * abacusCtrl.beadHeight;
+      var textY = 80 + (abacusCtrl.beadPerLine+2) * abacusCtrl.beadHeight;
       for(var i=0; i < abacusCtrl.beadLines; i++) {
         var textX = -30 + abacusCtrl.beadLines * abacusCtrl.beadSpacing - i * abacusCtrl.beadSpacing;
         var valueSum = 0;
