@@ -1,10 +1,3 @@
-// Copyright (C) Thorsten Thormaehlen, Marburg, 2013, All rights reserved
-// Contact: www.thormae.de
-
-// This software is written for educational (non-commercial) purpose. 
-// There is no warranty or other guarantee of fitness for this software, 
-// it is provided solely "as is". 
-
 function UIElement(x, y, width, height, type, ref, subref, slotType) {
     this.x = x;
     this.y = y;
