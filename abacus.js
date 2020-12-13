@@ -24,7 +24,7 @@ function UIElement(x, y, width, height, type, ref, subref, slotType) {
   function AbacusCtrl(type) {
     this.type = type; // 0 Japanese, 1 Chinese
     
-    this.beadLines = 8
+    this.beadLines = 7
     this.beadPerLine = (this.type == 0) ? 5 : 7;
     this.beadSep = (this.type == 0) ? 3 : 4;
     this.beadHeight = 35;
@@ -38,11 +38,11 @@ function UIElement(x, y, width, height, type, ref, subref, slotType) {
       for(var i=0; i < this.beadLines; i++) {
         for(var j=0; j < this.beadPerLine; j++) {
           var bead = new Bead();
-          bead.position[0] = 590 - i * this.beadSpacing;
-          bead.position[1] = 90 + this.beadPerLine * this.beadHeight - j * this.beadHeight;
+          bead.position[0] = 510 - i * this.beadSpacing;
+          bead.position[1] = 100 + this.beadPerLine * this.beadHeight - j * this.beadHeight;
           bead.value = 1;
           if(j > this.beadSep) {
-            bead.position[1] = 60 + this.beadPerLine * this.beadHeight - (j * this.beadHeight + 2 * this.beadHeight);
+            bead.position[1] = 50 + this.beadPerLine * this.beadHeight - (j * this.beadHeight + 2 * this.beadHeight);
             bead.value = 5;
           }
           bead.uniqueID = id;
@@ -53,8 +53,9 @@ function UIElement(x, y, width, height, type, ref, subref, slotType) {
     };
     
     this.intToRoman = function(num) {
-      var list = ['M', 'CM', 'D', 'CD','C','XC','L', 'XL','X','IX','V','IV','I']
-      var valueList = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1]
+      // "|Ẋ|", "|Ċ|", "|Ṁ|"
+      var list = ['Ṁ','ĊṀ', 'Ḋ','ĊḊ','Ċ','ẊĊ','Ḷ','ẊḶ', 'Ẋ', 'MẊ','Ṿ', 'MṾ', 'M', 'CM', 'D', 'CD','C','XC','L', 'XL','X','IX','V','IV','I']
+      var valueList = [1000000, 900000, 500000, 400000, 100000, 90000, 50000, 40000, 10000,9000, 5000, 4000, 1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1]
       var result = ''
       while(num !== 0) {
           for(var i = 0 ; i < valueList.length ; i++) {
@@ -87,7 +88,7 @@ function UIElement(x, y, width, height, type, ref, subref, slotType) {
         console.log(totalValue);
         
         var roman = "";
-        if(totalValue<4000){
+        if(totalValue<3000001){
           if(totalValue==0){
             roman=" (nulla)";
           }
@@ -232,6 +233,9 @@ function UIElement(x, y, width, height, type, ref, subref, slotType) {
         drawBead(i, ctx);
       }
     }
+
+
+    
   
     this.update = function() {
      
@@ -303,7 +307,7 @@ function UIElement(x, y, width, height, type, ref, subref, slotType) {
         if(j==1){
           ctx.beginPath();
           ctx.moveTo(20, y);
-          ctx.lineTo(640, y);
+          ctx.lineTo(570, y);
           ctx.stroke();
         };
         
@@ -317,7 +321,7 @@ function UIElement(x, y, width, height, type, ref, subref, slotType) {
       ctx.fillStyle = "rgba(255, 255, 255, 1.0)";
       ctx.textAlign = 'center';
       ctx.font = '16pt sans-serif';
-      var textY = 80 + (abacusCtrl.beadPerLine+2) * abacusCtrl.beadHeight;
+      var textY = 90 + (abacusCtrl.beadPerLine+2) * abacusCtrl.beadHeight;
       for(var i=0; i < abacusCtrl.beadLines; i++) {
         var textX = -30 + abacusCtrl.beadLines * abacusCtrl.beadSpacing - i * abacusCtrl.beadSpacing;
         var valueSum = 0;
@@ -336,7 +340,44 @@ function UIElement(x, y, width, height, type, ref, subref, slotType) {
         }
        
         ctx.fillText(valueSting, textX, textY);
-      }
+      };
+
+      //draw labels
+      ctx.fillStyle = "rgba(255, 255, 255, 1.0)";
+      ctx.textAlign = 'center';
+      ctx.font = '16pt sans-serif';
+      var lables = ["I", "X", "C", "M", "Ẋ", "Ċ", "Ṁ"]
+      var textY = -130 + (abacusCtrl.beadPerLine+2) * abacusCtrl.beadHeight;
+      var bgLabelY = -157 + (abacusCtrl.beadPerLine+2) * abacusCtrl.beadHeight;
+
+      console.log("yeet");
+      for(var i=0; i < abacusCtrl.beadLines; i++) {
+        console.log("yeet_");
+        
+        var textX = -30 + abacusCtrl.beadLines * abacusCtrl.beadSpacing - i * abacusCtrl.beadSpacing;
+        var bgLabelX = -50 + abacusCtrl.beadLines * abacusCtrl.beadSpacing - i * abacusCtrl.beadSpacing;
+        var valueSum = 0;
+        for(var j=0; j < abacusCtrl.beadPerLine; j++) {
+          var n = i * abacusCtrl.beadPerLine + j;
+          ctx.fillStyle = "rgba(33, 36, 41, 1)";
+          drawRoundRectFilled(ctx, bgLabelX, bgLabelY, 40, 40, 35);
+          ctx.fillStyle = "rgba(255, 255, 255, 1)";
+
+          ctx.fillText(lables[i], textX, textY);
+
+
+
+        }
+        
+        // var valueSting;
+        // if(abacusCtrl.type === 0) {
+        //    valueSting = valueSum.toString(10);
+        // }else{
+        //   valueSting = valueSum.toString(16);
+        // }
+       
+      };
+
     };
     
     function mouseOverElement(pos) {
